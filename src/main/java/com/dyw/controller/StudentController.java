@@ -55,4 +55,10 @@ public class StudentController {
         AjaxResult result = studentService.login(jsonString);
         return result;
     }
+
+    @PostMapping("/resetPassword")
+    public AjaxResult resetPassword(@RequestBody String jsonString){
+        AjaxResult result = studentService.resetPassword(jsonString);
+        return result;
+    }
 }

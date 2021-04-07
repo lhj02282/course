@@ -83,6 +83,40 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
+    @Override
+    public AjaxResult resetPassword(String jsonString) {
+        try {
+            JSONObject jsonObject = JSON.parseObject(jsonString);
+            String name = jsonObject.getString("name");
+            String studentId = jsonObject.getString("studentId");
+            String phone = jsonObject.getString("phone");
+            String password = jsonObject.getString("password");
+            String codeKey = jsonObject.getString("codeKey");
+            String code = jsonObject.getString("code");
+            //判断验证码
+            AjaxResult result = checkCode(codeKey, code);
+            if (!result.isState()){
+                return result;
+            }
+            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name",name);
+            map.put("studentId",studentId);
+            map.put("phone",phone);
+            queryWrapper.allEq(map);
+            Student studentDB = studentMapper.selectOne(queryWrapper);
+            if (studentDB==null){
+                return new AjaxResult(false,"该用户不存在,请确认输入的信息");
+            }
+            studentDB.setPassword(password);
+            studentMapper.updateById(studentDB);
+            return new AjaxResult(true,"修改密码成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new AjaxResult(false,"修改密码失败");
+        }
+    }
+
     private AjaxResult checkCode(String codeKey,String code){
         //删除过期的验证码
         ConcurrentHashMapCacheUtils.deleteTimeout();

@@ -8,4 +8,6 @@ public interface StudentService {
     AjaxResult register(String jsonString);
 
     AjaxResult login(String jsonString);
+
+    AjaxResult resetPassword(String jsonString);
 }
